@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="ne">
+<head>
+    <meta charset="UTF-8">
+    <title>Arjundhara Municipality - Compact Official System</title>
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <style>
+        :root { --gov-red: #d32f2f; --ui-blue: #1a73e8; }
+        * { box-sizing: border-box; font-family: 'Kalimati', 'Arial', sans-serif; }
+        body { margin: 0; background: #525659; display: flex; height: 100vh; overflow: hidden; }
+
+        /* SIDEBAR (Controls) */
+        .sidebar { width: 420px; background: white; border-right: 1px solid #ccc; display: flex; flex-direction: column; overflow-y: auto; }
+        .sidebar-header { padding: 12px; background: var(--gov-red); color: white; text-align: center; position: sticky; top: 0; z-index: 100; }
+        .sidebar-content { padding: 15px; }
+        
+        .form-section { background: #f9f9f9; border: 1px solid #ddd; border-radius: 6px; padding: 12px; margin-bottom: 15px; }
+        .section-title { font-size: 10px; font-weight: bold; color: var(--ui-blue); text-transform: uppercase; margin-bottom: 8px; display: block; border-bottom: 1px solid #eee; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .field-group { margin-bottom: 6px; }
+        .field-group label { display: block; font-size: 11px; font-weight: bold; color: #666; margin-bottom: 2px; }
+        input, select { width: 100%; padding: 6px; border: 1px solid #ccc; border-radius: 4px; font-size: 13px; }
+
+        .person-card { border: 1px solid #e0e0e0; padding: 10px; border-radius: 6px; margin-bottom: 10px; background: #fff; border-left: 4px solid var(--ui-blue); position: relative; }
+        .remove-btn { position: absolute; top: 5px; right: 5px; background: #ff4d4d; color: white; border: none; border-radius: 3px; cursor: pointer; padding: 2px 5px; font-size: 9px; }
+
+        /* HISTORY */
+        .history-section { border-top: 3px solid var(--ui-blue); padding: 12px; background: #f0f4f8; flex-grow: 1; display: flex; flex-direction: column; }
+        .history-container { flex-grow: 1; overflow-y: auto; border: 1px solid #ddd; background: white; border-radius: 4px; margin-bottom: 8px; }
+        .history-item { font-size: 11px; padding: 8px; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; }
+
+        /* PREVIEW AREA */
+        .preview-pane { flex: 1; overflow-y: auto; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+        
+        /* PAGE SETTINGS - MOVED UP (12mm top) */
+        .page { width: 210mm; min-height: 297mm; padding: 12mm 22mm 15mm 22mm; background: white; box-shadow: 0 0 15px rgba(0,0,0,0.5); display: flex; flex-direction: column; position: relative;}
+
+        /* COMPACT CENTERED HEADER */
+        .header-main { text-align: center; color: var(--gov-red); line-height: 1.2; width: 100%; margin-top: 0; }
+        .gov-logo { position: absolute; left: 22mm; top: 11mm; width: 85px; }
+        
+        .header-main h1 { margin: 0; font-size: 26pt; font-weight: 900; }
+        .header-main h2 { margin: 0; font-size: 18pt; font-weight: 800; }
+        .header-main p { margin: 2px 0; font-size: 12pt; font-weight: bold; }
+
+        .meta-data { margin-top: 35px; color: var(--gov-red); font-weight: bold; font-size: 12pt; }
+        .meta-row { display: flex; justify-content: space-between; margin-bottom: 3px; }
+        .divider { border: 1px solid var(--gov-red); margin: 5px 0 20px 0; }
+
+        .subject { text-align: center; font-size: 15pt; font-weight: bold; text-decoration: underline; margin: 20px 0; color: black; }
+        .data-table { width: 100%; border-collapse: collapse; margin-top: 10px; color: black; }
+        .data-table td { border: 1px solid black; padding: 8px; font-size: 11pt; text-align: center; }
+        .label-cell { background: #f9f9f9; font-weight: bold; width: 150px; text-align: left !important; }
+        
+        .footer-sign { margin-top: auto; align-self: flex-end; text-align: center; width: 220px; padding-bottom: 20mm; color: black; line-height: 1.4; }
+
+        .btn { padding: 10px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 8px; }
+        .btn-print { background: var(--gov-red); color: white; font-size: 15px; }
+
+        @media print {
+            .sidebar { display: none; }
+            .preview-pane { padding: 0; background: white; }
+            .page { box-shadow: none; margin: 0; width: 210mm; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="sidebar">
+    <div class="sidebar-header">
+        <h3 style="margin:0">Official Form</h3>
+        <p style="margin:0; font-size:10px;">Header Lifted Upward</p>
+    </div>
+    
+    <div class="sidebar-content">
+        <div class="form-section">
+            <span class="section-title">विवरण</span>
+            <div class="grid-2">
+                <div class="field-group"><label>प.सं.</label><input type="text" id="in_psan" value="२०८२/०८३" oninput="updateLetter()"></div>
+                <div class="field-group"><label>च.नं.</label><input type="text" id="in_cnan" oninput="updateLetter()"></div>
+            </div>
+            <div class="grid-2">
+                <div class="field-group"><label>मिति (BS)</label><input type="text" id="in_date" value="२०८२/१०/११" oninput="updateLetter()"></div>
+                <div class="field-group"><label>ने.स. (NS)</label><input type="text" id="in_nesa" value="११४६" oninput="updateLetter()"></div>
+            </div>
+            <div class="field-group">
+                <label>पठाउने वडा</label>
+                <select id="in_ward" onchange="updateLetter()">
+                    <script>for(let i=1;i<=11;i++) document.write(`<option value="${i}" ${i==8?'selected':''}>वडा नं. ${i}</option>`);</script>
+                </select>
+            </div>
+        </div>
+
+        <div id="person_container"></div>
+        <button class="btn" style="background: #e3f2fd; color: var(--ui-blue);" onclick="addPersonRow()">+ व्यक्ति थप्नुहोस्</button>
+        <button class="btn btn-print" onclick="handlePrint()">प्रिन्ट र सुरक्षित गर्नुहोस्</button>
+    </div>
+
+    <div class="history-section">
+        <span class="section-title">इतिहास</span>
+        <div class="history-container" id="history_list"></div>
+    </div>
+</div>
+
+<div class="preview-pane">
+    <div class="page" id="letter_page">
+        <img class="gov-logo" src="https://upload.wikimedia.org/wikipedia/commons/2/23/Emblem_of_Nepal.svg">
+        
+        <div class="header-main">
+            <h1>अर्जुनधारा नगरपालिका</h1>
+            <h2>नगर कार्यपालिकाको कार्यालय</h2>
+            <p>शनिश्चरे, झापा, कोशी प्रदेश</p>
+        </div>
+        
+        <div class="meta-data">
+            <div class="meta-row"><span>प.सं.: <span id="out_psan"></span></span></div>
+            <div class="meta-row"><span>च.नं.: <span id="out_cnan"></span></span><span>मिति : <span id="out_date"></span></span></div>
+            <div class="meta-row"><span></span><span>ने.स. : <span id="out_nesa"></span></span></div>
+        </div>
+        
+        <hr class="divider">
+        
+        <p style="font-weight:bold; font-size:13pt; color:black; margin-top:5px;">श्री <span id="out_ward"></span> नं वडा कार्यालय,<br>अर्जुनधारा नगरपालिका।</p>
+        
+        <div class="subject">विषयः जानकारी सम्बन्धमा</div>
+        
+        <div style="text-align:justify; line-height:1.6; text-indent:40px; font-size:13pt; color:black; margin-bottom:15px;">
+            प्रस्तुत विषयमा तहाँ कार्यालयको च. न. <strong><span id="out_ref_cnan">...</span></strong> को विवरण उपलब्ध गराई दिने सम्बन्धी प्राप्त पत्रानुसार अर्जुनधारा नगरपालिका वडा नं. <strong><span id="out_body_ward"></span></strong> निवासी निम्नुसारको विवरण भएको जन्म दर्ता अभिलेख हेरी विवरण खुलाई पठाई दिन लेखि आएकोमा यस कार्यालयमा रहेको जन्म दर्ता अभिलेख किताब तथा डिजिटाईजेशनमा समेत उक्त विवरण फेला नपरेको व्यहोरा अनुरोध छ ।
+        </div>
+        
+        <table class="data-table" id="out_table"></table>
+        
+        <div class="footer-sign">
+            <p>..........................................</p>
+            <p><strong></strong><br></p>
+        </div>
+    </div>
+</div>
+
+<script>
+    google.load("elements", "1", { packages: "transliteration" });
+    function initTransliteration() {
+        const options = { sourceLanguage: 'en', destinationLanguage: ['ne'], shortcutKey: 'ctrl+g', transliterationEnabled: true };
+        const control = new google.elements.transliteration.TransliterationControl(options);
+        document.addEventListener('focusin', e => { if (e.target.tagName === 'INPUT' && e.target.type === 'text') control.makeTransliteratable([e.target]); });
+    }
+    google.setOnLoadCallback(initTransliteration);
+
+    function addPersonRow(data = {}) {
+        const id = "p_" + Date.now();
+        const div = document.createElement('div');
+        div.className = 'person-card'; div.id = id;
+        div.innerHTML = `
+            <button class="remove-btn" onclick="document.getElementById('${id}').remove(); updateLetter();">×</button>
+            <div class="grid-2">
+                <div class="field-group"><label>नाम</label><input type="text" class="p-name" value="${data.name || ''}" oninput="updateLetter()"></div>
+                <div class="field-group"><label>दर्ता नम्बर</label><input type="text" class="p-rn" value="${data.rn || '-'}" oninput="updateLetter()"></div>
+                <div class="field-group"><label>बाजेको नाम</label><input type="text" class="p-gf" value="${data.gf || ''}" oninput="updateLetter()"></div>
+                <div class="field-group"><label>वुवाको नाम</label><input type="text" class="p-f" value="${data.f || ''}" oninput="updateLetter()"></div>
+            </div>
+        `;
+        document.getElementById('person_container').appendChild(div);
+        updateLetter();
+    }
+
+    function updateLetter() {
+        const toNep = (n) => n.toString().replace(/\d/g, d => ['०','१','२','३','४','५','६','७','८','९'][d]);
+        document.getElementById('out_psan').innerText = document.getElementById('in_psan').value;
+        document.getElementById('out_cnan').innerText = document.getElementById('in_cnan').value;
+        document.getElementById('out_date').innerText = document.getElementById('in_date').value;
+        document.getElementById('out_nesa').innerText = document.getElementById('in_nesa').value;
+        document.getElementById('out_ward').innerText = toNep(document.getElementById('in_ward').value);
+        document.getElementById('out_body_ward').innerText = toNep(document.getElementById('in_ward').value);
+        
+        const cards = document.querySelectorAll('.person-card');
+        const labels = ["नाम:", "बाजेको नाम:", "वुवाको नाम:", "दर्ता नम्बर:"];
+        const classes = [".p-name", ".p-gf", ".p-f", ".p-rn"];
+        let h = "";
+        labels.forEach((label, i) => {
+            h += `<tr><td class="label-cell">${label}</td>`;
+            cards.forEach(c => h += `<td>${c.querySelector(classes[i]).value}</td>`);
+            h += `</tr>`;
+        });
+        document.getElementById('out_table').innerHTML = h;
+    }
+
+    function handlePrint() {
+        const history = JSON.parse(localStorage.getItem('mun_compact_db_v2') || '[]');
+        history.unshift({id: Date.now(), cnan: document.getElementById('in_cnan').value, time: new Date().toLocaleString('ne-NP')});
+        localStorage.setItem('mun_compact_db_v2', JSON.stringify(history.slice(0, 50)));
+        renderHistory();
+        window.print();
+    }
+
+    function renderHistory() {
+        const history = JSON.parse(localStorage.getItem('mun_compact_db_v2') || '[]');
+        document.getElementById('history_list').innerHTML = history.map(h => `<div class="history-item"><b>${h.cnan}</b> <span>${h.time}</span></div>`).join('');
+    }
+
+    window.onload = () => { addPersonRow(); renderHistory(); };
+</script>
+</body>
+</html>
